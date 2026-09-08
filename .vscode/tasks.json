@@ -1,0 +1,16 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Restore missing Papaver asset",
+			"type": "shell",
+			"command": "Copy-Item",
+			"args": [
+				"images/(Papaver somniferum), ,.jpg",
+				"images/opium-poppy.jpg"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}
