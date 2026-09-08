@@ -69,18 +69,49 @@ grid.addEventListener('click', (event) => {
 
 const menuToggle = document.querySelector('.menu-toggle');
 const mobileMenu = document.querySelector('.mobile-menu');
-menuToggle.addEventListener('click', () => {
-  const isOpen = mobileMenu.classList.toggle('open');
-  menuToggle.setAttribute('aria-expanded', String(isOpen));
-  menuToggle.setAttribute('aria-label', isOpen ? 'Close navigation' : 'Open navigation');
-  mobileMenu.setAttribute('aria-hidden', String(!isOpen));
-});
-mobileMenu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
-  mobileMenu.classList.remove('open');
-  menuToggle.setAttribute('aria-expanded', 'false');
-  menuToggle.setAttribute('aria-label', 'Open navigation');
-  mobileMenu.setAttribute('aria-hidden', 'true');
-}));
+
+function setMobileMenuState(open) {
+  if (!mobileMenu || !menuToggle) return;
+  mobileMenu.classList.toggle('open', open);
+  if (open) {
+    mobileMenu.removeAttribute('hidden');
+    mobileMenu.hidden = false;
+  } else {
+    mobileMenu.setAttribute('hidden', '');
+    mobileMenu.hidden = true;
+  }
+  menuToggle.setAttribute('aria-expanded', String(open));
+  menuToggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+  mobileMenu.setAttribute('aria-hidden', String(!open));
+}
+
+if (menuToggle && mobileMenu) {
+  setMobileMenuState(false);
+
+  menuToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const willOpen = !mobileMenu.classList.contains('open');
+    setMobileMenuState(willOpen);
+  });
+
+  mobileMenu.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      setMobileMenuState(false);
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (mobileMenu.classList.contains('open') && !e.target.closest('.site-header')) {
+      setMobileMenuState(false);
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && mobileMenu.classList.contains('open')) {
+      setMobileMenuState(false);
+    }
+  });
+}
 renderCards();
 
 const submissionModal = document.querySelector('#submission-modal');
